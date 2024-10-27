@@ -1,0 +1,220 @@
+[gd_scene load_steps=23 format=3 uid="uid://6v00cnwk6buc"]
+
+[ext_resource type="Script" path="res://scenes/program/file.gd" id="1_p5hup"]
+[ext_resource type="Script" path="res://scenes/program/program_v_box.gd" id="1_q3x1e"]
+[ext_resource type="Texture2D" uid="uid://ub8dqwsjcw34" path="res://assets/svgs/pencil.svg" id="1_w86cd"]
+[ext_resource type="Texture2D" uid="uid://dwm1tjvrxhoug" path="res://assets/svgs/easer.svg" id="2_1of37"]
+[ext_resource type="Script" path="res://scenes/program/edit.gd" id="3_r016b"]
+[ext_resource type="Texture2D" uid="uid://b4enjwixtktr" path="res://assets/svgs/fill.svg" id="3_v6a6m"]
+[ext_resource type="Script" path="res://scenes/program/canvas_texture.gd" id="4_eg0u0"]
+[ext_resource type="Script" path="res://scenes/program/pen.gd" id="4_i5txg"]
+[ext_resource type="Script" path="res://scenes/program/view.gd" id="4_k2ciw"]
+[ext_resource type="Texture2D" uid="uid://dxjghuob6le5f" path="res://assets/svgs/layer_add.svg" id="4_y53sm"]
+[ext_resource type="Script" path="res://scenes/program/canvas_stats_label.gd" id="5_6nhn8"]
+[ext_resource type="Texture2D" uid="uid://b1vk5n78oxmtk" path="res://assets/svgs/layer_remove.svg" id="5_ibvau"]
+[ext_resource type="Script" path="res://scenes/program/primary_color_picker.gd" id="6_3wvn4"]
+[ext_resource type="Script" path="res://scenes/program/eraser.gd" id="6_jegmu"]
+[ext_resource type="Script" path="res://scenes/program/layers.gd" id="7_ukmxh"]
+[ext_resource type="Script" path="res://scenes/program/secondary_color_picker.gd" id="7_y2qc2"]
+[ext_resource type="Script" path="res://scenes/program/bucket.gd" id="8_6pano"]
+[ext_resource type="Shader" path="res://assets/shaders/canvas.gdshader" id="14_3f04b"]
+[ext_resource type="Script" path="res://scenes/program/layer_add.gd" id="14_h4se2"]
+[ext_resource type="Script" path="res://scenes/program/layer_remove.gd" id="16_cwb77"]
+[ext_resource type="Script" path="res://scenes/program/export_file_dialog.gd" id="21_k4k78"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qri3t"]
+shader = ExtResource("14_3f04b")
+shader_parameter/show_grid = true
+shader_parameter/zoom_level = 1
+shader_parameter/grid_cell_size = Vector2i(1, 1)
+shader_parameter/grid_color = Vector4(0, 0, 0, 1)
+
+[node name="Program" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Program_Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Program_VBox" type="VBoxContainer" parent="Program_Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("1_q3x1e")
+
+[node name="Main_Menu_HBox" type="HBoxContainer" parent="Program_Margin/Program_VBox"]
+layout_mode = 2
+
+[node name="Main_MenuBar" type="MenuBar" parent="Program_Margin/Program_VBox/Main_Menu_HBox"]
+layout_mode = 2
+
+[node name="File" type="PopupMenu" parent="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar"]
+title = "File"
+item_count = 5
+item_0/text = "New"
+item_1/text = "Load"
+item_1/id = 1
+item_2/text = "Export"
+item_2/id = 2
+item_2/disabled = true
+item_3/text = "Save"
+item_3/id = 3
+item_3/disabled = true
+item_4/text = "Exit"
+item_4/id = 4
+script = ExtResource("1_p5hup")
+
+[node name="Edit" type="PopupMenu" parent="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar"]
+item_count = 2
+item_0/text = "Grid Settings"
+item_1/text = "Resize Canvas"
+item_1/id = 1
+item_1/disabled = true
+script = ExtResource("3_r016b")
+
+[node name="View" type="PopupMenu" parent="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar"]
+item_count = 1
+item_0/text = "Grid"
+item_0/disabled = true
+script = ExtResource("4_k2ciw")
+
+[node name="Canvas_Stats_Label" type="Label" parent="Program_Margin/Program_VBox/Main_Menu_HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("5_6nhn8")
+
+[node name="Work_Area" type="HBoxContainer" parent="Program_Margin/Program_VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Tools" type="VBoxContainer" parent="Program_Margin/Program_VBox/Work_Area"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Pen" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+layout_mode = 2
+icon = ExtResource("1_w86cd")
+script = ExtResource("4_i5txg")
+
+[node name="Eraser" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+layout_mode = 2
+icon = ExtResource("2_1of37")
+script = ExtResource("6_jegmu")
+
+[node name="Bucket" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+layout_mode = 2
+icon = ExtResource("3_v6a6m")
+script = ExtResource("8_6pano")
+
+[node name="Primary_Color_Picker" type="ColorPickerButton" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+script = ExtResource("6_3wvn4")
+
+[node name="Secondary_Color_Picker" type="ColorPickerButton" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+color = Color(1, 1, 1, 1)
+script = ExtResource("7_y2qc2")
+
+[node name="Tip_Size_Slider" type="HSlider" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+layout_mode = 2
+
+[node name="Tip_Size_SpinBox" type="SpinBox" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+layout_mode = 2
+
+[node name="Canvas_Scroll" type="ScrollContainer" parent="Program_Margin/Program_VBox/Work_Area"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Canvas_Texture" type="TextureRect" parent="Program_Margin/Program_VBox/Work_Area/Canvas_Scroll"]
+unique_name_in_owner = true
+texture_filter = 1
+material = SubResource("ShaderMaterial_qri3t")
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+script = ExtResource("4_eg0u0")
+
+[node name="Layers_PanelContainer" type="PanelContainer" parent="Program_Margin/Program_VBox/Work_Area"]
+layout_mode = 2
+
+[node name="Layers_Vbox" type="VBoxContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer"]
+layout_mode = 2
+
+[node name="Layers_Scroll" type="ScrollContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox"]
+custom_minimum_size = Vector2(348, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Layers" type="VBoxContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Scroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(348, 0)
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("7_ukmxh")
+
+[node name="Layers_Buttons" type="HBoxContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="Layer_Add" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons"]
+layout_mode = 2
+icon = ExtResource("4_y53sm")
+script = ExtResource("14_h4se2")
+
+[node name="Layer_Remove" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons"]
+layout_mode = 2
+icon = ExtResource("5_ibvau")
+script = ExtResource("16_cwb77")
+
+[node name="Popup_Group" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="Save_FileDialog" type="FileDialog" parent="Popup_Group"]
+size = Vector2i(352, 180)
+access = 2
+filters = PackedStringArray("*.json")
+use_native_dialog = true
+
+[node name="Load_FileDialog" type="FileDialog" parent="Popup_Group"]
+auto_translate_mode = 1
+title = "Open a File"
+size = Vector2i(324, 180)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.json")
+use_native_dialog = true
+
+[node name="Export_FileDialog" type="FileDialog" parent="Popup_Group"]
+auto_translate_mode = 1
+size = Vector2i(352, 180)
+access = 2
+filters = PackedStringArray("*.png")
+use_native_dialog = true
+script = ExtResource("21_k4k78")
+
+[connection signal="id_pressed" from="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/File" to="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/File" method="_on_id_pressed"]
+[connection signal="id_pressed" from="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/Edit" to="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/Edit" method="_on_id_pressed"]
+[connection signal="id_pressed" from="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/View" to="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/View" method="_on_id_pressed"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools/Pen" to="Program_Margin/Program_VBox/Work_Area/Tools/Pen" method="_on_pressed"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools/Eraser" to="Program_Margin/Program_VBox/Work_Area/Tools/Eraser" method="_on_pressed"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools/Bucket" to="Program_Margin/Program_VBox/Work_Area/Tools/Bucket" method="_on_pressed"]
+[connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools/Primary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools/Primary_Color_Picker" method="_on_color_changed"]
+[connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools/Secondary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools/Secondary_Color_Picker" method="_on_color_changed"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons/Layer_Add" to="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons/Layer_Add" method="_on_pressed"]
+[connection signal="button_up" from="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons/Layer_Remove" to="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons/Layer_Remove" method="_on_button_up"]
+[connection signal="file_selected" from="Popup_Group/Export_FileDialog" to="Popup_Group/Export_FileDialog" method="_on_file_selected"]

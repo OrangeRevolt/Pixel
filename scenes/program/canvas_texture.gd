@@ -1,12 +1,13 @@
 extends TextureRect
 
+const REDRAW_PORTION = 0
+const REDRAW_ALL = 1
+
 const INPUT_ONE = 0
 const INPUT_TWO = 1
 var canvas_img : Image = Image.create_empty(8,8,false,Image.FORMAT_RGBA8)
 var flood_fill_task_done = true #prevent user from clicking on canvas before bucket fill finishes.
 
-#var bucket_thread = Thread.new()
-#var mut = Mutex.new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -90,12 +91,19 @@ func _process(_delta: float) -> void:
 		
 		GlobalSignals.update_shaders.emit()
 	
+	if Input.is_action_just_pressed("Tool_Color_Sample") and ProgramData.canvas_meta["layers"].size() > 0 and _mouse_in_canvas(get_local_mouse_position()) == true:
+		
+		var snap_ms_pos : Vector2i = Vector2i(int(floor(get_local_mouse_position().x / ((ProgramData.canvas_meta["size"].x * ProgramData.canvas_meta["zoom_level"]) / ProgramData.canvas_meta["size"].x))), int(floor(get_local_mouse_position().y / ((ProgramData.canvas_meta["size"].y * ProgramData.canvas_meta["zoom_level"]) / ProgramData.canvas_meta["size"].y))))
+		ProgramData.canvas_meta["primary_color"] = ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(snap_ms_pos)
+		%Primary_Color_Picker.color = ProgramData.canvas_meta["primary_color"]
+	
 	if Input.is_action_pressed("Tool_Input_One") and ProgramData.canvas_meta["layers"].size() > 0:
 		
 		if ProgramData.canvas_meta["selected_tool"] == ProgramData.PEN_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
 			pen(INPUT_ONE)
 		
 	elif Input.is_action_pressed("Tool_Input_Two") and ProgramData.canvas_meta["layers"].size() > 0:
+		
 		if ProgramData.canvas_meta["selected_tool"] == ProgramData.PEN_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
 			pen(INPUT_TWO)
 	
@@ -103,8 +111,6 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_released("Tool_Input_One") and ProgramData.canvas_meta["layers"].size() > 0 and flood_fill_task_done == true:
 		if ProgramData.canvas_meta["selected_tool"] == ProgramData.BUCKET_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
 			flood_fill_task_done = false
-			#mut.lock()
-			#bucket_thread.start(Callable(self,"bucket()").bind(INPUT_ONE),Thread.PRIORITY_HIGH)
 			bucket(INPUT_ONE)
 			
 	elif Input.is_action_just_released("Tool_Input_Two") and ProgramData.canvas_meta["layers"].size() > 0 and flood_fill_task_done == true:
@@ -123,7 +129,7 @@ func _redraw_layers(redraw_type : int):
 	canvas_img.resize(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,Image.INTERPOLATE_NEAREST)
 	
 	#only one pixel changed so we only copy one pixel without the need to check for transperency.
-	if redraw_type == ProgramData.REDRAW_PORTION:
+	if redraw_type == REDRAW_PORTION:
 		
 		for l in ProgramData.canvas_meta["layers"]:
 			if ProgramData.canvas_meta["selected_tool"] == ProgramData.PEN_TOOL:
@@ -131,7 +137,7 @@ func _redraw_layers(redraw_type : int):
 					canvas_img.blit_rect(l.image,Rect2i(Vector2i(snap_ms_pos.x,snap_ms_pos.y),Vector2i(1,1)),Vector2i(snap_ms_pos.x,snap_ms_pos.y))
 					
 	#more than one pixel changed, so we need to update all layers. (this is slow..not sure what to improve, cause i need to prevent drawing transperency removing the previous layers pixels.)
-	elif redraw_type == ProgramData.REDRAW_ALL:
+	elif redraw_type == REDRAW_ALL:
 		
 		canvas_img.fill(ProgramData.canvas_meta["color"])
 		var sample_pixel_color : Color
@@ -156,12 +162,12 @@ func pen(action_type) -> void:
 	if action_type == INPUT_ONE and sample_color != ProgramData.canvas_meta["primary_color"]:
 		if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(snap_ms_pos) != ProgramData.canvas_meta["primary_color"]:
 			ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(snap_ms_pos,ProgramData.canvas_meta["primary_color"])
-			_redraw_layers(ProgramData.REDRAW_PORTION)
+			_redraw_layers(REDRAW_PORTION)
 			
 	elif action_type == INPUT_TWO and sample_color != ProgramData.canvas_meta["secondary_color"]:
 		if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(snap_ms_pos) != ProgramData.canvas_meta["secondary_color"]:
 			ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(snap_ms_pos,ProgramData.canvas_meta["secondary_color"])
-			_redraw_layers(ProgramData.REDRAW_PORTION)
+			_redraw_layers(REDRAW_PORTION)
 
 func bucket(action_type) -> void:
 	
@@ -233,7 +239,7 @@ func bucket(action_type) -> void:
 			#remove first in que, because we are finished with that pixel.
 			que_fill.pop_front()
 		#mut.unlock()
-		_redraw_layers(ProgramData.REDRAW_ALL)
+		_redraw_layers(REDRAW_ALL)
 		flood_fill_task_done = true
 
 func _draw() -> void:

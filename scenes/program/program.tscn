@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://6v00cnwk6buc"]
+[gd_scene load_steps=25 format=3 uid="uid://6v00cnwk6buc"]
 
 [ext_resource type="Script" path="res://scenes/program/file.gd" id="1_p5hup"]
 [ext_resource type="Script" path="res://scenes/program/program_v_box.gd" id="1_q3x1e"]
@@ -14,12 +14,14 @@
 [ext_resource type="Texture2D" uid="uid://b1vk5n78oxmtk" path="res://assets/svgs/layer_remove.svg" id="5_ibvau"]
 [ext_resource type="Script" path="res://scenes/program/primary_color_picker.gd" id="6_3wvn4"]
 [ext_resource type="Script" path="res://scenes/program/eraser.gd" id="6_jegmu"]
+[ext_resource type="Script" path="res://scenes/program/tools_pane.gd" id="6_ybxt7"]
 [ext_resource type="Script" path="res://scenes/program/layers.gd" id="7_ukmxh"]
 [ext_resource type="Script" path="res://scenes/program/secondary_color_picker.gd" id="7_y2qc2"]
 [ext_resource type="Script" path="res://scenes/program/bucket.gd" id="8_6pano"]
 [ext_resource type="Shader" path="res://assets/shaders/canvas.gdshader" id="14_3f04b"]
 [ext_resource type="Script" path="res://scenes/program/layer_add.gd" id="14_h4se2"]
 [ext_resource type="Script" path="res://scenes/program/layer_remove.gd" id="16_cwb77"]
+[ext_resource type="Script" path="res://scenes/program/layers_pane.gd" id="16_hi1ry"]
 [ext_resource type="Script" path="res://scenes/program/export_file_dialog.gd" id="21_k4k78"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qri3t"]
@@ -99,41 +101,56 @@ script = ExtResource("5_6nhn8")
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Tools" type="VBoxContainer" parent="Program_Margin/Program_VBox/Work_Area"]
+[node name="Tools_Pane" type="VBoxContainer" parent="Program_Margin/Program_VBox/Work_Area"]
 layout_mode = 2
 theme_override_constants/separation = 16
+script = ExtResource("6_ybxt7")
 
-[node name="Pen" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+[node name="Pen" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
+unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 icon = ExtResource("1_w86cd")
 script = ExtResource("4_i5txg")
 
-[node name="Eraser" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+[node name="Eraser" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
+unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 icon = ExtResource("2_1of37")
 script = ExtResource("6_jegmu")
 
-[node name="Bucket" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+[node name="Bucket" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
+unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 icon = ExtResource("3_v6a6m")
 script = ExtResource("8_6pano")
 
-[node name="Primary_Color_Picker" type="ColorPickerButton" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+[node name="Primary_Color_Picker" type="ColorPickerButton" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
+disabled = true
 script = ExtResource("6_3wvn4")
 
-[node name="Secondary_Color_Picker" type="ColorPickerButton" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+[node name="Secondary_Color_Picker" type="ColorPickerButton" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
+disabled = true
 color = Color(1, 1, 1, 1)
 script = ExtResource("7_y2qc2")
 
-[node name="Tip_Size_Slider" type="HSlider" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+[node name="Tip_Size_Slider" type="HSlider" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
+unique_name_in_owner = true
 layout_mode = 2
+editable = false
 
-[node name="Tip_Size_SpinBox" type="SpinBox" parent="Program_Margin/Program_VBox/Work_Area/Tools"]
+[node name="Tip_Size_SpinBox" type="SpinBox" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
+unique_name_in_owner = true
 layout_mode = 2
+editable = false
 
 [node name="Canvas_Scroll" type="ScrollContainer" parent="Program_Margin/Program_VBox/Work_Area"]
 layout_mode = 2
@@ -148,35 +165,40 @@ size_flags_horizontal = 6
 size_flags_vertical = 6
 script = ExtResource("4_eg0u0")
 
-[node name="Layers_PanelContainer" type="PanelContainer" parent="Program_Margin/Program_VBox/Work_Area"]
+[node name="Layers_Pane" type="PanelContainer" parent="Program_Margin/Program_VBox/Work_Area"]
+layout_mode = 2
+script = ExtResource("16_hi1ry")
+
+[node name="Layers_Vbox" type="VBoxContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_Pane"]
 layout_mode = 2
 
-[node name="Layers_Vbox" type="VBoxContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer"]
-layout_mode = 2
-
-[node name="Layers_Scroll" type="ScrollContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox"]
+[node name="Layers_Scroll" type="ScrollContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox"]
 custom_minimum_size = Vector2(348, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Layers" type="VBoxContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Scroll"]
+[node name="Layers" type="VBoxContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Scroll"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(348, 0)
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("7_ukmxh")
 
-[node name="Layers_Buttons" type="HBoxContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox"]
+[node name="Layers_Buttons" type="HBoxContainer" parent="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox"]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="Layer_Add" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons"]
+[node name="Layer_Add" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons"]
+unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 icon = ExtResource("4_y53sm")
 script = ExtResource("14_h4se2")
 
-[node name="Layer_Remove" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons"]
+[node name="Layer_Remove" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons"]
+unique_name_in_owner = true
 layout_mode = 2
+disabled = true
 icon = ExtResource("5_ibvau")
 script = ExtResource("16_cwb77")
 
@@ -184,12 +206,14 @@ script = ExtResource("16_cwb77")
 unique_name_in_owner = true
 
 [node name="Save_FileDialog" type="FileDialog" parent="Popup_Group"]
+unique_name_in_owner = true
 size = Vector2i(352, 180)
 access = 2
 filters = PackedStringArray("*.json")
 use_native_dialog = true
 
 [node name="Load_FileDialog" type="FileDialog" parent="Popup_Group"]
+unique_name_in_owner = true
 auto_translate_mode = 1
 title = "Open a File"
 size = Vector2i(324, 180)
@@ -200,6 +224,7 @@ filters = PackedStringArray("*.json")
 use_native_dialog = true
 
 [node name="Export_FileDialog" type="FileDialog" parent="Popup_Group"]
+unique_name_in_owner = true
 auto_translate_mode = 1
 size = Vector2i(352, 180)
 access = 2
@@ -210,11 +235,11 @@ script = ExtResource("21_k4k78")
 [connection signal="id_pressed" from="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/File" to="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/File" method="_on_id_pressed"]
 [connection signal="id_pressed" from="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/Edit" to="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/Edit" method="_on_id_pressed"]
 [connection signal="id_pressed" from="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/View" to="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar/View" method="_on_id_pressed"]
-[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools/Pen" to="Program_Margin/Program_VBox/Work_Area/Tools/Pen" method="_on_pressed"]
-[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools/Eraser" to="Program_Margin/Program_VBox/Work_Area/Tools/Eraser" method="_on_pressed"]
-[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools/Bucket" to="Program_Margin/Program_VBox/Work_Area/Tools/Bucket" method="_on_pressed"]
-[connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools/Primary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools/Primary_Color_Picker" method="_on_color_changed"]
-[connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools/Secondary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools/Secondary_Color_Picker" method="_on_color_changed"]
-[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons/Layer_Add" to="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons/Layer_Add" method="_on_pressed"]
-[connection signal="button_up" from="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons/Layer_Remove" to="Program_Margin/Program_VBox/Work_Area/Layers_PanelContainer/Layers_Vbox/Layers_Buttons/Layer_Remove" method="_on_button_up"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Pen" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Pen" method="_on_pressed"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Eraser" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Eraser" method="_on_pressed"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Bucket" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Bucket" method="_on_pressed"]
+[connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" method="_on_color_changed"]
+[connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Secondary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Secondary_Color_Picker" method="_on_color_changed"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Add" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Add" method="_on_pressed"]
+[connection signal="button_up" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Remove" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Remove" method="_on_button_up"]
 [connection signal="file_selected" from="Popup_Group/Export_FileDialog" to="Popup_Group/Export_FileDialog" method="_on_file_selected"]

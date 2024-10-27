@@ -1,0 +1,33 @@
+							ORP Version 0.2
+================================================================================
+
+Renamed Layers_PanelContainer to Layers_Pane.
+
+--------------------------------------------------------------------------------
+
+Fixed Layers_Pane buttons enabled at startup. Now disabled until 
+user creates canvas.
+
+--------------------------------------------------------------------------------
+
+Made the filedialogs use unique name so it's more clear what node is being used.
+Added user's canvas name to filedialogs when saving or exporting.
+(Saving function is not implemented yet)
+
+--------------------------------------------------------------------------------
+
+Renamed Tools_Vbox name to Tools_Pane and disabled all tools pane nodes on 
+startup.
+
+--------------------------------------------------------------------------------
+
+Programmed color sample tool shortcut for any tool (Cntrl + Left click). Updates 
+the primary color in canvas data and the primary color picker button.
+
+--------------------------------------------------------------------------------
+
+Removed old commented out code about thread use.
+
+--------------------------------------------------------------------------------
+
+Moved the REDRAW_PORTION and REDRAW_FULL consts into Canvas_Texture's script.

@@ -16,10 +16,12 @@ func _on_id_pressed(id: int) -> void:
 		%Program_VBox.hide()
 		%Canvas_Texture.set_process(false)
 	elif id == 1: #load
-		%Popup_Group.get_child(1).popup_centered(Vector2i(500,400))
+		%Load_FileDialog.popup_centered(Vector2i(500,400))
 	elif id == 2: #export
-		%Popup_Group.get_child(2).popup_centered(Vector2i(500,400))
+		%Export_FileDialog.get_line_edit().text = ProgramData.canvas_meta["name"]
+		%Export_FileDialog.popup_centered(Vector2i(500,400))
 	elif id == 3: #save
-		%Popup_Group.get_child(0).popup_centered(Vector2i(500,400))
+		%Save_FileDialog.get_line_edit().text = ProgramData.canvas_meta["name"]
+		%Save_FileDialog.popup_centered(Vector2i(500,400))
 	elif id == 4: #exit
 		get_tree().quit()

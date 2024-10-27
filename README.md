@@ -7,7 +7,7 @@ The first release will be version 1.0, focused on the neccessary features first.
 
 * Pen, Eraser, Bucket tools.
 
-* Layer creation, naming, and deletion.
+* Layer creation, naming, visibility and deletion.
 
 * Zoom and pan canvas.
 
@@ -17,10 +17,15 @@ The first release will be version 1.0, focused on the neccessary features first.
 
 * Cursor pixel snapping.
 
+* Saving and loading canvas.
+  
+* Export canvas as png.
 
-These are the further verions plans.
+## Planned for the future.
 
 ## v2.0 Features
+
+* Export canvas with the option to convert layers to animation frames (sprite sheet creator.)
 
 * Layer combine.
 

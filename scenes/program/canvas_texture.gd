@@ -38,17 +38,17 @@ func _create_canvas():
 	
 
 func _resize_usercanvas():
-	#create a new image to resize layers
-	var rimg : Image = Image.create_empty(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,false,Image.FORMAT_RGBA8)
-	rimg.fill(Color.TRANSPARENT)
+	
 	canvas_img.resize(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,Image.INTERPOLATE_NEAREST)
 	canvas_img.fill(ProgramData.canvas_meta["color"])
 	
 	for l in ProgramData.canvas_meta["layers"]:
+		#create a new image to resize layers
+		var rimg : Image = Image.create_empty(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,false,Image.FORMAT_RGBA8)
 		#copy over the old image to the new resized image, top-left. (change this in version 2.0 so to allow the user to change where the old image will be ancored(top-left,top,top-right,bottom-right,bottom,bottom-right) if new image is larger then the layer size
 		rimg.blit_rect(l.image,Rect2i(Vector2i(0,0),Vector2i(l.image.get_width(),l.image.get_height())),Vector2i(0,0))
 		l.image = rimg
-		if l.visible:
+		if l.visible == true:
 			for y in l.image.get_width():
 				for x in l.image.get_height():
 					if l.image.get_pixelv(Vector2i(x,y)) != Color.TRANSPARENT:
@@ -101,7 +101,9 @@ func _process(_delta: float) -> void:
 		
 		if ProgramData.canvas_meta["selected_tool"] == ProgramData.PEN_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
 			pen(INPUT_ONE)
-		
+		elif ProgramData.canvas_meta["selected_tool"] == ProgramData.ERASER_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
+			eraser(INPUT_ONE)
+			
 	elif Input.is_action_pressed("Tool_Input_Two") and ProgramData.canvas_meta["layers"].size() > 0:
 		
 		if ProgramData.canvas_meta["selected_tool"] == ProgramData.PEN_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
@@ -117,9 +119,25 @@ func _process(_delta: float) -> void:
 		if ProgramData.canvas_meta["selected_tool"] == ProgramData.BUCKET_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
 			flood_fill_task_done = false
 			bucket(INPUT_TWO)
-			
+	
+	if Input.is_action_just_pressed("Tool_Tip_Increase") and ProgramData.canvas_meta["layers"].size() > 0:
+		ProgramData.canvas_meta["tool_tip_size"] = clamp(ProgramData.canvas_meta["tool_tip_size"] + 1, 1, 100)
+		%Tip_Size_Slider.value = ProgramData.canvas_meta["tool_tip_size"]
+		%Tip_Size_SpinBox.value = ProgramData.canvas_meta["tool_tip_size"]
+		
+	elif Input.is_action_just_pressed("Tool_Tip_Decrease") and ProgramData.canvas_meta["layers"].size() > 0:
+		ProgramData.canvas_meta["tool_tip_size"] = clamp(ProgramData.canvas_meta["tool_tip_size"] - 1, 1, 100)
+		%Tip_Size_Slider.value = ProgramData.canvas_meta["tool_tip_size"]
+		%Tip_Size_SpinBox.value = ProgramData.canvas_meta["tool_tip_size"]
+		
+	if Input.is_action_just_pressed("Pen_Tool"):
+		ProgramData.canvas_meta["selected_tool"] = ProgramData.PEN_TOOL
+	elif Input.is_action_just_pressed("Eraser_Tool"):
+		ProgramData.canvas_meta["selected_tool"] = ProgramData.ERASER_TOOL
+	elif Input.is_action_just_pressed("Bucket_Tool"):
+		ProgramData.canvas_meta["selected_tool"] = ProgramData.BUCKET_TOOL
 
-func _redraw_layers(redraw_type : int):
+func _redraw_layers(redraw_type : int = 1):
 	
 	#recopy the layers to canvas img if they are visible.
 	
@@ -134,7 +152,7 @@ func _redraw_layers(redraw_type : int):
 		for l in ProgramData.canvas_meta["layers"]:
 			if ProgramData.canvas_meta["selected_tool"] == ProgramData.PEN_TOOL:
 				if l.visible == true:
-					canvas_img.blit_rect(l.image,Rect2i(Vector2i(snap_ms_pos.x,snap_ms_pos.y),Vector2i(1,1)),Vector2i(snap_ms_pos.x,snap_ms_pos.y))
+					canvas_img.blit_rect(l.image,Rect2i(Vector2i(snap_ms_pos.x,snap_ms_pos.y),Vector2i(ProgramData.canvas_meta["tool_tip_size"],ProgramData.canvas_meta["tool_tip_size"])),Vector2i(snap_ms_pos.x,snap_ms_pos.y))
 					
 	#more than one pixel changed, so we need to update all layers. (this is slow..not sure what to improve, cause i need to prevent drawing transperency removing the previous layers pixels.)
 	elif redraw_type == REDRAW_ALL:
@@ -158,16 +176,47 @@ func pen(action_type) -> void:
 	#do perportion math to get the correct position of the mouse, respecting the true size in ProgramData.
 	var snap_ms_pos : Vector2i = Vector2i(int(floor(get_local_mouse_position().x / ((ProgramData.canvas_meta["size"].x * ProgramData.canvas_meta["zoom_level"]) / ProgramData.canvas_meta["size"].x))), int(floor(get_local_mouse_position().y / ((ProgramData.canvas_meta["size"].y * ProgramData.canvas_meta["zoom_level"]) / ProgramData.canvas_meta["size"].y))))
 	var sample_color = ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(snap_ms_pos)
-	
+	var cur_layer = ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]]
 	if action_type == INPUT_ONE and sample_color != ProgramData.canvas_meta["primary_color"]:
-		if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(snap_ms_pos) != ProgramData.canvas_meta["primary_color"]:
-			ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(snap_ms_pos,ProgramData.canvas_meta["primary_color"])
+		if cur_layer.image.get_pixelv(snap_ms_pos) != ProgramData.canvas_meta["primary_color"]:
+			for py in ProgramData.canvas_meta["tool_tip_size"]:
+				for px in ProgramData.canvas_meta["tool_tip_size"]:
+					if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
+						cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),ProgramData.canvas_meta["primary_color"])
 			_redraw_layers(REDRAW_PORTION)
 			
 	elif action_type == INPUT_TWO and sample_color != ProgramData.canvas_meta["secondary_color"]:
-		if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(snap_ms_pos) != ProgramData.canvas_meta["secondary_color"]:
-			ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(snap_ms_pos,ProgramData.canvas_meta["secondary_color"])
+		if cur_layer.image.get_pixelv(snap_ms_pos) != ProgramData.canvas_meta["secondary_color"]:
+			for py in ProgramData.canvas_meta["tool_tip_size"]:
+				for px in ProgramData.canvas_meta["tool_tip_size"]:
+					if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
+						cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),ProgramData.canvas_meta["secondary_color"])
 			_redraw_layers(REDRAW_PORTION)
+
+func eraser(action_type) -> void:
+	#eraser works the same way as pen, but draws with transperency on layers above base layer.
+	var snap_ms_pos : Vector2i = Vector2i(int(floor(get_local_mouse_position().x / ((ProgramData.canvas_meta["size"].x * ProgramData.canvas_meta["zoom_level"]) / ProgramData.canvas_meta["size"].x))), int(floor(get_local_mouse_position().y / ((ProgramData.canvas_meta["size"].y * ProgramData.canvas_meta["zoom_level"]) / ProgramData.canvas_meta["size"].y))))
+	var sample_color = ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(snap_ms_pos)
+	var cur_layer = ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]]
+	if action_type == INPUT_ONE:
+		
+		if ProgramData.canvas_meta["secondary_color"] != sample_color:
+			
+			if ProgramData.canvas_meta["selected_layer"] < 1:
+				
+				for py in ProgramData.canvas_meta["tool_tip_size"]:
+					for px in ProgramData.canvas_meta["tool_tip_size"]:
+						
+						if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
+							print("eraser")
+							cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),ProgramData.canvas_meta["secondary_color"])
+				_redraw_layers(REDRAW_ALL)
+			else:
+				for py in ProgramData.canvas_meta["tool_tip_size"]:
+					for px in ProgramData.canvas_meta["tool_tip_size"]:
+						if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
+							cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),Color.TRANSPARENT)
+				_redraw_layers(REDRAW_ALL)
 
 func bucket(action_type) -> void:
 	
@@ -255,7 +304,7 @@ func _draw() -> void:
 		#we invert the sample color values so we can still see the tip texture no matter what color is on canvas.
 		var invert_color : Color = Color(1.0 - sample_pixel.r, 1.0 - sample_pixel.g, 1.0 - sample_pixel.b, 1.0)
 		#draw representation of the tool tip texture.
-		draw_rect(Rect2(snap_ms_pos,Vector2(ProgramData.canvas_meta["zoom_level"],ProgramData.canvas_meta["zoom_level"])),invert_color,false,0.5,true)
+		draw_rect(Rect2(snap_ms_pos,Vector2(ProgramData.canvas_meta["tool_tip_size"] * ProgramData.canvas_meta["zoom_level"],ProgramData.canvas_meta["tool_tip_size"] * ProgramData.canvas_meta["zoom_level"])),invert_color,false,0.5,true)
 
 func _exit_tree() -> void:
 	pass

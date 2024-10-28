@@ -14,5 +14,5 @@ func _on_button_up() -> void:
 		ProgramData.canvas_meta["selected_layer"] -= 1
 		#print(ProgramData.canvas_meta["layers"])
 		
-	%Canvas_Texture._redraw_layers(ProgramData.REDRAW_ALL)
+	%Canvas_Texture._redraw_layers()
 	GlobalSignals.redraw_gui_nodes.emit()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://6v00cnwk6buc"]
+[gd_scene load_steps=27 format=3 uid="uid://6v00cnwk6buc"]
 
 [ext_resource type="Script" path="res://scenes/program/file.gd" id="1_p5hup"]
 [ext_resource type="Script" path="res://scenes/program/program_v_box.gd" id="1_q3x1e"]
@@ -20,7 +20,9 @@
 [ext_resource type="Script" path="res://scenes/program/bucket.gd" id="8_6pano"]
 [ext_resource type="Shader" path="res://assets/shaders/canvas.gdshader" id="14_3f04b"]
 [ext_resource type="Script" path="res://scenes/program/layer_add.gd" id="14_h4se2"]
+[ext_resource type="Script" path="res://scenes/program/tip_size_slider.gd" id="15_04nx8"]
 [ext_resource type="Script" path="res://scenes/program/layer_remove.gd" id="16_cwb77"]
+[ext_resource type="Script" path="res://scenes/program/tip_size_spin_box.gd" id="16_ek22m"]
 [ext_resource type="Script" path="res://scenes/program/layers_pane.gd" id="16_hi1ry"]
 [ext_resource type="Script" path="res://scenes/program/export_file_dialog.gd" id="21_k4k78"]
 
@@ -145,12 +147,18 @@ script = ExtResource("7_y2qc2")
 [node name="Tip_Size_Slider" type="HSlider" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
 unique_name_in_owner = true
 layout_mode = 2
+min_value = 1.0
+value = 1.0
 editable = false
+script = ExtResource("15_04nx8")
 
 [node name="Tip_Size_SpinBox" type="SpinBox" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
 unique_name_in_owner = true
 layout_mode = 2
+min_value = 1.0
+value = 1.0
 editable = false
+script = ExtResource("16_ek22m")
 
 [node name="Canvas_Scroll" type="ScrollContainer" parent="Program_Margin/Program_VBox/Work_Area"]
 layout_mode = 2
@@ -240,6 +248,8 @@ script = ExtResource("21_k4k78")
 [connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Bucket" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Bucket" method="_on_pressed"]
 [connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" method="_on_color_changed"]
 [connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Secondary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Secondary_Color_Picker" method="_on_color_changed"]
+[connection signal="value_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_Slider" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_Slider" method="_on_value_changed"]
+[connection signal="value_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_SpinBox" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_SpinBox" method="_on_value_changed"]
 [connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Add" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Add" method="_on_pressed"]
 [connection signal="button_up" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Remove" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Remove" method="_on_button_up"]
 [connection signal="file_selected" from="Popup_Group/Export_FileDialog" to="Popup_Group/Export_FileDialog" method="_on_file_selected"]

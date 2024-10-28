@@ -17,6 +17,7 @@ var canvas_meta = {
 	"zoom_level" : 1, #zoom level of user canvas.
 	"selected_layer" : 0, #the current layer selected.
 	"selected_tool" : 0, #the current tool selected.
+	"tool_tip_size" : 1, #the size of the tool cursor texture.
 	"primary_color" : Color.BLACK, #the primary color of choosen by user. default black on start.
 	"secondary_color" : Color.WHITE, #the secondary color choosen by user. default white on start.
 	"grid" : false, #bool to show/hide the canvas grid, by way of the canvas shader.

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://6v00cnwk6buc"]
+[gd_scene load_steps=29 format=3 uid="uid://6v00cnwk6buc"]
 
 [ext_resource type="Script" path="res://scenes/program/file.gd" id="1_p5hup"]
 [ext_resource type="Script" path="res://scenes/program/program_v_box.gd" id="1_q3x1e"]
@@ -25,6 +25,8 @@
 [ext_resource type="Script" path="res://scenes/program/tip_size_spin_box.gd" id="16_ek22m"]
 [ext_resource type="Script" path="res://scenes/program/layers_pane.gd" id="16_hi1ry"]
 [ext_resource type="Script" path="res://scenes/program/export_file_dialog.gd" id="21_k4k78"]
+[ext_resource type="Script" path="res://scenes/program/save_file_dialog.gd" id="25_sbf7w"]
+[ext_resource type="Script" path="res://scenes/program/load_file_dialog.gd" id="26_140ea"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qri3t"]
 shader = ExtResource("14_3f04b")
@@ -219,6 +221,7 @@ size = Vector2i(352, 180)
 access = 2
 filters = PackedStringArray("*.json")
 use_native_dialog = true
+script = ExtResource("25_sbf7w")
 
 [node name="Load_FileDialog" type="FileDialog" parent="Popup_Group"]
 unique_name_in_owner = true
@@ -230,6 +233,7 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.json")
 use_native_dialog = true
+script = ExtResource("26_140ea")
 
 [node name="Export_FileDialog" type="FileDialog" parent="Popup_Group"]
 unique_name_in_owner = true
@@ -252,4 +256,6 @@ script = ExtResource("21_k4k78")
 [connection signal="value_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_SpinBox" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_SpinBox" method="_on_value_changed"]
 [connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Add" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Add" method="_on_pressed"]
 [connection signal="button_up" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Remove" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Remove" method="_on_button_up"]
+[connection signal="file_selected" from="Popup_Group/Save_FileDialog" to="Popup_Group/Save_FileDialog" method="_on_file_selected"]
+[connection signal="file_selected" from="Popup_Group/Load_FileDialog" to="Popup_Group/Load_FileDialog" method="_on_file_selected"]
 [connection signal="file_selected" from="Popup_Group/Export_FileDialog" to="Popup_Group/Export_FileDialog" method="_on_file_selected"]

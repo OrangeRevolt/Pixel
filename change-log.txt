@@ -1,12 +1,12 @@
-							ORP Version 0.3
+							ORP Version 0.4
 ================================================================================
 
-Programmed tool tip size (for pen left click and right click.)
-Programmed tool tip increase/decrease with shortcut (brackets)
+Fixed bug with layer naming, not setting the text value in canvas data.
 
 --------------------------------------------------------------------------------
 
-Programmed Eraser tool.
+Programmed saving .ORP json file 
+Programmed loading .ORP json file
 
 --------------------------------------------------------------------------------
 

@@ -177,21 +177,22 @@ func pen(action_type) -> void:
 	var snap_ms_pos : Vector2i = Vector2i(int(floor(get_local_mouse_position().x / ((ProgramData.canvas_meta["size"].x * ProgramData.canvas_meta["zoom_level"]) / ProgramData.canvas_meta["size"].x))), int(floor(get_local_mouse_position().y / ((ProgramData.canvas_meta["size"].y * ProgramData.canvas_meta["zoom_level"]) / ProgramData.canvas_meta["size"].y))))
 	var sample_color = ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(snap_ms_pos)
 	var cur_layer = ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]]
-	if action_type == INPUT_ONE and sample_color != ProgramData.canvas_meta["primary_color"]:
-		if cur_layer.image.get_pixelv(snap_ms_pos) != ProgramData.canvas_meta["primary_color"]:
-			for py in ProgramData.canvas_meta["tool_tip_size"]:
-				for px in ProgramData.canvas_meta["tool_tip_size"]:
-					if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
+	if action_type == INPUT_ONE:
+		for py in ProgramData.canvas_meta["tool_tip_size"]:
+			for px in ProgramData.canvas_meta["tool_tip_size"]:
+				if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
+					sample_color = ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(Vector2i(snap_ms_pos.x + px, snap_ms_pos.y + py))
+					if sample_color != ProgramData.canvas_meta["primary_color"]:
 						cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),ProgramData.canvas_meta["primary_color"])
-			_redraw_layers(REDRAW_PORTION)
+		_redraw_layers(REDRAW_PORTION)
 			
-	elif action_type == INPUT_TWO and sample_color != ProgramData.canvas_meta["secondary_color"]:
-		if cur_layer.image.get_pixelv(snap_ms_pos) != ProgramData.canvas_meta["secondary_color"]:
-			for py in ProgramData.canvas_meta["tool_tip_size"]:
-				for px in ProgramData.canvas_meta["tool_tip_size"]:
-					if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
+	elif action_type == INPUT_TWO:
+		for py in ProgramData.canvas_meta["tool_tip_size"]:
+			for px in ProgramData.canvas_meta["tool_tip_size"]:
+				if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
+					if sample_color != ProgramData.canvas_meta["secondary_color"]:
 						cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),ProgramData.canvas_meta["secondary_color"])
-			_redraw_layers(REDRAW_PORTION)
+		_redraw_layers(REDRAW_PORTION)
 
 func eraser(action_type) -> void:
 	#eraser works the same way as pen, but draws with transperency on layers above base layer.
@@ -218,7 +219,17 @@ func eraser(action_type) -> void:
 							cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),Color.TRANSPARENT)
 				_redraw_layers(REDRAW_ALL)
 
+func layer_img_is_one_color(layer_dex):
+	var first_color : Array = [ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[0],ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[1],ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[2],ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[3]]
+	for x in ProgramData.canvas_meta["layers"][layer_dex].image.get_data().size() / 4:
+		if x > 0:
+			if ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[x * 4] != first_color[0] or ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[(x * 4) + 1] != first_color[1] or ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[(x * 4) + 2] != first_color[2] or ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[(x * 4) + 3] != first_color[3]:
+				return false
+	return true
+	
+
 func bucket(action_type) -> void:
+	
 	
 	#We use a flood-fill algorithm to fill the canvas, by checking the current pixels neighbors (x - 1, y - 1, x + 1, y + 1) until we run out pixels to fill or run into a different color from sample.
 	
@@ -229,67 +240,78 @@ func bucket(action_type) -> void:
 	#Grab the sample color on the canvas, where the mouse position is.
 	var sample_pixel : Color = ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(snap_ms_pos)
 	
+	
 	#Dont fill if the sample is the same as the primary or secondary color.
 	if (action_type == INPUT_ONE and sample_pixel != ProgramData.canvas_meta["primary_color"]) or (action_type == INPUT_TWO and sample_pixel != ProgramData.canvas_meta["secondary_color"]):
 		
-		#create que pixel data, to add first pixel to check in while loop.
-		var que_pixel = {
-			"pos": snap_ms_pos,
-			"color": ProgramData.canvas_meta["primary_color"],
-		}
-		if action_type == INPUT_ONE:
-			que_pixel.color = ProgramData.canvas_meta["primary_color"]
-		elif action_type == INPUT_TWO:
-			que_pixel.color = ProgramData.canvas_meta["secondary_color"]
+		#if image is filled with one color, than just fill it using the image.fill because it's faster.
+		if layer_img_is_one_color(ProgramData.canvas_meta["selected_layer"]) == true:
+			if action_type == INPUT_ONE:
+				ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.fill(ProgramData.canvas_meta["primary_color"])
+			elif action_type == INPUT_TWO:
+				ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.fill(ProgramData.canvas_meta["secondary_color"])
+			_redraw_layers(REDRAW_ALL)
+			return
 			
-		
-		que_fill.push_back(que_pixel)
-		ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(que_pixel.pos,que_pixel.color)
-		
-		#Keep checking until the que_fill is empty.
-		while que_fill.size() > 0:
-			#Check the qued pixel's neighbor pixels to add to que.
-			if que_fill[0].pos.x + 1 < ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_width():
-				var que_pixel_right = {
-					"pos": Vector2i(que_fill[0].pos.x + 1,que_fill[0].pos.y),
-					"color": que_fill[0].color,
-				}
-				if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(Vector2i(que_fill[0].pos.x + 1,que_fill[0].pos.y)) == sample_pixel:
-					ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(Vector2i(que_fill[0].pos.x + 1,que_fill[0].pos.y),que_pixel_right.color)
-					que_fill.push_back(que_pixel_right)
-					
-			if que_fill[0].pos.x - 1 > -1:
-				var que_pixel_left = {
-					"pos": Vector2i(que_fill[0].pos.x - 1,que_fill[0].pos.y),
-					"color": que_fill[0].color,
-				}
-				if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(Vector2i(que_fill[0].pos.x - 1,que_fill[0].pos.y)) == sample_pixel:
-					ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(Vector2i(que_fill[0].pos.x - 1,que_fill[0].pos.y),que_pixel_left.color)
-					que_fill.push_back(que_pixel_left)
-					
-			if que_fill[0].pos.y + 1 < ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_height():
-				var que_pixel_down = {
-					"pos": Vector2i(que_fill[0].pos.x,que_fill[0].pos.y + 1),
-					"color": que_fill[0].color,
-				}
-				if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(Vector2i(que_fill[0].pos.x,que_fill[0].pos.y + 1)) == sample_pixel:
-					ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(Vector2i(que_fill[0].pos.x,que_fill[0].pos.y + 1),que_pixel_down.color)
-					que_fill.push_back(que_pixel_down)
-					
-			if que_fill[0].pos.y - 1 > -1:
-				var que_pixel_up = {
-					"pos": Vector2i(que_fill[0].pos.x,que_fill[0].pos.y - 1),
-					"color": que_fill[0].color,
-				}
-				if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(Vector2i(que_fill[0].pos.x,que_fill[0].pos.y - 1)) == sample_pixel:
-					ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(Vector2i(que_fill[0].pos.x,que_fill[0].pos.y - 1),que_pixel_up.color)
-					que_fill.push_back(que_pixel_up)
+		else:
+			#create que pixel data, to add first pixel to check in while loop.
+			var que_pixel = {
+				"pos": snap_ms_pos,
+				"color": ProgramData.canvas_meta["primary_color"],
+			}
+			if action_type == INPUT_ONE:
+				que_pixel.color = ProgramData.canvas_meta["primary_color"]
+			elif action_type == INPUT_TWO:
+				que_pixel.color = ProgramData.canvas_meta["secondary_color"]
 				
-			#remove first in que, because we are finished with that pixel.
-			que_fill.pop_front()
-		#mut.unlock()
-		_redraw_layers(REDRAW_ALL)
-		flood_fill_task_done = true
+			
+			que_fill.push_back(que_pixel)
+			ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(que_pixel.pos,que_pixel.color)
+			
+			#Keep checking until the que_fill is empty.
+			while que_fill.size() > 0:
+				#Check the qued pixel's neighbor pixels to add to que.
+				if que_fill[0].pos.x + 1 < ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_width():
+					var que_pixel_right = {
+						"pos": Vector2i(que_fill[0].pos.x + 1,que_fill[0].pos.y),
+						"color": que_fill[0].color,
+					}
+					if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(Vector2i(que_fill[0].pos.x + 1,que_fill[0].pos.y)) == sample_pixel:
+						ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(Vector2i(que_fill[0].pos.x + 1,que_fill[0].pos.y),que_pixel_right.color)
+						que_fill.push_back(que_pixel_right)
+						
+				if que_fill[0].pos.x - 1 > -1:
+					var que_pixel_left = {
+						"pos": Vector2i(que_fill[0].pos.x - 1,que_fill[0].pos.y),
+						"color": que_fill[0].color,
+					}
+					if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(Vector2i(que_fill[0].pos.x - 1,que_fill[0].pos.y)) == sample_pixel:
+						ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(Vector2i(que_fill[0].pos.x - 1,que_fill[0].pos.y),que_pixel_left.color)
+						que_fill.push_back(que_pixel_left)
+						
+				if que_fill[0].pos.y + 1 < ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_height():
+					var que_pixel_down = {
+						"pos": Vector2i(que_fill[0].pos.x,que_fill[0].pos.y + 1),
+						"color": que_fill[0].color,
+					}
+					if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(Vector2i(que_fill[0].pos.x,que_fill[0].pos.y + 1)) == sample_pixel:
+						ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(Vector2i(que_fill[0].pos.x,que_fill[0].pos.y + 1),que_pixel_down.color)
+						que_fill.push_back(que_pixel_down)
+						
+				if que_fill[0].pos.y - 1 > -1:
+					var que_pixel_up = {
+						"pos": Vector2i(que_fill[0].pos.x,que_fill[0].pos.y - 1),
+						"color": que_fill[0].color,
+					}
+					if ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.get_pixelv(Vector2i(que_fill[0].pos.x,que_fill[0].pos.y - 1)) == sample_pixel:
+						ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.set_pixelv(Vector2i(que_fill[0].pos.x,que_fill[0].pos.y - 1),que_pixel_up.color)
+						que_fill.push_back(que_pixel_up)
+					
+				#remove first in que, because we are finished with that pixel.
+				que_fill.pop_front()
+			
+			_redraw_layers(REDRAW_ALL)
+			flood_fill_task_done = true
 
 func _draw() -> void:
 	#we use the original perportion math for the color we need to sample. Make sure to clamp the values so they are not beyond the canvas.

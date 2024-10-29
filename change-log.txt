@@ -1,15 +1,16 @@
-							ORP Version 0.4
+							ORP Version 0.5
 ================================================================================
 
-Fixed bug with layer naming, not setting the text value in canvas data.
+Improved performance of bucket function when canvas is one color.
 
 --------------------------------------------------------------------------------
 
-Programmed saving .ORP json file 
-Programmed loading .ORP json file
+Fixed bug with the pen tool not checking sample color for each pixel of the brush size,
+causing gaps in the drawn color.
 
 --------------------------------------------------------------------------------
 
-Recfactored Canvas Resize to fix bug not working right with layers.
+Fixed not updating the tool tip slider to tip spinbox or the tip spinbox to tip slider, 
+when either of them are changed.
 
 --------------------------------------------------------------------------------

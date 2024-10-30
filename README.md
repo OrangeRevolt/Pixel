@@ -23,11 +23,14 @@ welcome to request features and report bugs. Enjoy
 * Saving and loading canvas.
   
 * Export canvas as png.
+  
 
 ## Planned for the future.
 
 ## v2.0 Features
 
+* Undo/Redo canvas data
+  
 * Export canvas with the option to convert layers to animation frames (sprite sheet creator.)
 
 * Layer combine.

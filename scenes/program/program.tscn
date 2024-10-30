@@ -136,6 +136,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 disabled = true
+keep_pressed_outside = true
 script = ExtResource("6_3wvn4")
 
 [node name="Secondary_Color_Picker" type="ColorPickerButton" parent="Program_Margin/Program_VBox/Work_Area/Tools_Pane"]
@@ -143,6 +144,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 disabled = true
+keep_pressed_outside = true
 color = Color(1, 1, 1, 1)
 script = ExtResource("7_y2qc2")
 
@@ -251,6 +253,8 @@ script = ExtResource("21_k4k78")
 [connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Eraser" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Eraser" method="_on_pressed"]
 [connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Bucket" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Bucket" method="_on_pressed"]
 [connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" method="_on_color_changed"]
+[connection signal="popup_closed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" method="_on_popup_closed"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Primary_Color_Picker" method="_on_pressed"]
 [connection signal="color_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Secondary_Color_Picker" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Secondary_Color_Picker" method="_on_color_changed"]
 [connection signal="value_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_Slider" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_Slider" method="_on_value_changed"]
 [connection signal="value_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_SpinBox" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_SpinBox" method="_on_value_changed"]

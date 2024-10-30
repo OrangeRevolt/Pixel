@@ -1,16 +1,11 @@
-							ORP Version 0.5
+							ORP Version 0.6
 ================================================================================
 
-Improved performance of bucket function when canvas is one color.
+Updated local theme of tools, so it's easy to know what tool is selected.
 
 --------------------------------------------------------------------------------
 
-Fixed bug with the pen tool not checking sample color for each pixel of the brush size,
-causing gaps in the drawn color.
-
---------------------------------------------------------------------------------
-
-Fixed not updating the tool tip slider to tip spinbox or the tip spinbox to tip slider, 
-when either of them are changed.
+Updated tool tip size for the slider and spinbox to disable on bucket tool 
+selection.
 
 --------------------------------------------------------------------------------

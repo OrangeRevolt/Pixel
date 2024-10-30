@@ -5,7 +5,6 @@ const PEN_TOOL = 0
 const ERASER_TOOL = 1
 const BUCKET_TOOL = 2
 
-
 #holds all the important info for saving later when saving out as .orp format (JSON)
 #layers will be saved out by it's image data, and reloaded with new image nodes.
 

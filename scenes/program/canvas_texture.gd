@@ -11,11 +11,23 @@ var flood_fill_task_done = true #prevent user from clicking on canvas before buc
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	GlobalSignals.popup_open.connect(Callable(self,"_disable_input"))
+	GlobalSignals.popup_exited.connect(Callable(self,"_enable_input"))
 	GlobalSignals.create_user_canvas.connect(Callable(self,"_create_canvas"))
 	GlobalSignals.redraw_canvas.connect(Callable(self,"_redraw_layers"))
 	GlobalSignals.update_shaders.connect(Callable(self,"_update_local_shaders"))
 	GlobalSignals.resize_canvas.connect(Callable(self,"_resize_usercanvas"))
 
+func _disable_input():
+	print("canvas input process disabled")
+	set_process_input(false)
+	set_process(false)
+
+
+func _enable_input():
+	print("canvas input process enabled")
+	set_process_input(true)
+	set_process(true)
 
 func _update_local_shaders():
 	
@@ -209,7 +221,6 @@ func eraser(action_type) -> void:
 					for px in ProgramData.canvas_meta["tool_tip_size"]:
 						
 						if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
-							print("eraser")
 							cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),ProgramData.canvas_meta["secondary_color"])
 				_redraw_layers(REDRAW_ALL)
 			else:

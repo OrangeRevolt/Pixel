@@ -13,26 +13,16 @@ func _update_button_theme():
 		add_theme_color_override("icon_hover_color",Color.BLACK)
 		add_theme_stylebox_override("normal",bsl)
 		add_theme_stylebox_override("focus",bsl)
+	else:
+		remove_theme_stylebox_override("normal")
+		remove_theme_color_override("icon_normal_color")
+		remove_theme_color_override("icon_focus_color")
+		remove_theme_color_override("icon_hover_color")
+
 
 func _on_pressed() -> void:
 	ProgramData.canvas_meta["selected_tool"] = ProgramData.ERASER_TOOL
 	%Tip_Size_Slider.editable = true
 	%Tip_Size_SpinBox.editable = true
-
-	var bsl : StyleBoxFlat = StyleBoxFlat.new()
-	bsl.bg_color = Color.ORANGE_RED
-	bsl.set_corner_radius_all(4)
-	add_theme_color_override("icon_normal_color",Color.BLACK)
-	add_theme_color_override("icon_focus_color",Color.BLACK)
-	add_theme_color_override("icon_hover_color",Color.BLACK)
-	add_theme_stylebox_override("normal",bsl)
-	add_theme_stylebox_override("focus",bsl)
+	GlobalSignals.redraw_gui_nodes.emit()
 	
-	%Pen.remove_theme_stylebox_override("normal")
-	%Pen.remove_theme_color_override("icon_normal_color")
-	%Pen.remove_theme_color_override("icon_focus_color")
-	%Pen.remove_theme_color_override("icon_hover_color")
-	%Bucket.remove_theme_stylebox_override("normal")
-	%Bucket.remove_theme_color_override("icon_normal_color")
-	%Bucket.remove_theme_color_override("icon_focus_color")
-	%Bucket.remove_theme_color_override("icon_hover_color")

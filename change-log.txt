@@ -1,11 +1,20 @@
-							ORP Version 0.6
+							ORP Version 0.7
 ================================================================================
 
-Updated local theme of tools, so it's easy to know what tool is selected.
+Fixed bug with eraser tool not working right, do to not putting the sample pixel
+chicker inside the loop.
+
+-------------------------------------------------------------------------------
+
+Improved code in the tool script to use the update gui signal instead for all 
+theme related changing. (removes dependency issue)
+
+---------------------------------------------------------------------------------
+
+Programmed Undo/Redo function for layer's image.
 
 --------------------------------------------------------------------------------
 
-Updated tool tip size for the slider and spinbox to disable on bucket tool 
-selection.
+Programmed cancel button for Resize Canvas popup.
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------------------------

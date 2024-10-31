@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://t2f2bpp3rhux"]
+[gd_scene load_steps=3 format=3 uid="uid://t2f2bpp3rhux"]
 
 [ext_resource type="Script" path="res://scenes/popups/resize_canvas/resize_canvas_confirm_button.gd" id="1_syy62"]
+[ext_resource type="Script" path="res://scenes/popups/resize_canvas/resize_canvas_cancel_button.gd" id="2_xy8mx"]
 
 [node name="Resize_Canvas" type="Control"]
 layout_mode = 3
@@ -98,5 +99,7 @@ script = ExtResource("1_syy62")
 custom_minimum_size = Vector2(96, 64)
 layout_mode = 2
 text = "Cancel"
+script = ExtResource("2_xy8mx")
 
 [connection signal="pressed" from="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons/Resize_Canvas_Confirm_Button" to="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons/Resize_Canvas_Confirm_Button" method="_on_pressed"]
+[connection signal="pressed" from="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons/Resize_Canvas_Cancel_Button" to="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons/Resize_Canvas_Cancel_Button" method="_on_pressed"]

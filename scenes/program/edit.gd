@@ -19,3 +19,7 @@ func _on_id_pressed(id: int) -> void:
 		%Popup_Group.add_child(preload("res://scenes/popups/resize_canvas/resize_canvas.tscn").instantiate())
 		%Program_VBox.hide()
 		%Canvas_Texture.set_process(false)
+	if id == 2: #Undo
+		GlobalSignals.undo.emit()
+	if id == 3: #Redo
+		GlobalSignals.redo.emit()

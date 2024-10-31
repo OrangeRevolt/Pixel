@@ -83,11 +83,15 @@ item_4/id = 4
 script = ExtResource("1_p5hup")
 
 [node name="Edit" type="PopupMenu" parent="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar"]
-item_count = 2
+item_count = 4
 item_0/text = "Grid Settings"
 item_1/text = "Resize Canvas"
 item_1/id = 1
 item_1/disabled = true
+item_2/text = "Undo"
+item_2/id = 2
+item_3/text = "Redo"
+item_3/id = 3
 script = ExtResource("3_r016b")
 
 [node name="View" type="PopupMenu" parent="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar"]

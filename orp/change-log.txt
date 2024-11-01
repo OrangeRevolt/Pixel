@@ -1,0 +1,15 @@
+							ORP Version 0.8
+================================================================================
+
+Refactord Undo/Redo to fix bug that held onto the old redo history when not at
+end of history size. This also fixed a issue that happen when on a new layer.
+
+--------------------------------------------------------------------------------
+
+Programmed undo/redo menu disabled until the history array has history.
+
+--------------------------------------------------------------------------------
+
+Programmed undo/redo for eraser and bucket.
+
+-------------------------------------------------------------------------------

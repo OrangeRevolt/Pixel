@@ -1,0 +1,105 @@
+[gd_scene load_steps=3 format=3 uid="uid://t2f2bpp3rhux"]
+
+[ext_resource type="Script" path="res://scenes/popups/resize_canvas/resize_canvas_confirm_button.gd" id="1_syy62"]
+[ext_resource type="Script" path="res://scenes/popups/resize_canvas/resize_canvas_cancel_button.gd" id="2_xy8mx"]
+
+[node name="Resize_Canvas" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 320.0
+offset_top = 128.0
+offset_right = -320.0
+offset_bottom = -144.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Resize_Canvas_Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Resize_Canvas_VBox" type="VBoxContainer" parent="Resize_Canvas_Margin"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Resize_Canvas_Margin/Resize_Canvas_VBox"]
+layout_mode = 2
+text = "Resize Canvas"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Resize_Canvas_Size_Grid_Margin" type="MarginContainer" parent="Resize_Canvas_Margin/Resize_Canvas_VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_right = 16
+
+[node name="Resize_Canvas_Grid" type="GridContainer" parent="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Size_Grid_Margin"]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Size_Grid_Margin/Resize_Canvas_Grid"]
+layout_mode = 2
+text = "Width:"
+horizontal_alignment = 2
+
+[node name="Resize_Canvas_Width_SpinBox" type="SpinBox" parent="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Size_Grid_Margin/Resize_Canvas_Grid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 8.0
+max_value = 1024.0
+step = 8.0
+value = 8.0
+rounded = true
+
+[node name="Label2" type="Label" parent="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Size_Grid_Margin/Resize_Canvas_Grid"]
+layout_mode = 2
+text = "Height:"
+horizontal_alignment = 2
+
+[node name="Resize_Canvas_Height_SpinBox" type="SpinBox" parent="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Size_Grid_Margin/Resize_Canvas_Grid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+min_value = 8.0
+max_value = 1024.0
+step = 8.0
+value = 8.0
+rounded = true
+
+[node name="Resize_Canvas_Choice_Buttons" type="HBoxContainer" parent="Resize_Canvas_Margin/Resize_Canvas_VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="Resize_Canvas_Confirm_Button" type="Button" parent="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons"]
+custom_minimum_size = Vector2(96, 64)
+layout_mode = 2
+text = "Confirm"
+script = ExtResource("1_syy62")
+
+[node name="Resize_Canvas_Cancel_Button" type="Button" parent="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons"]
+custom_minimum_size = Vector2(96, 64)
+layout_mode = 2
+text = "Cancel"
+script = ExtResource("2_xy8mx")
+
+[connection signal="pressed" from="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons/Resize_Canvas_Confirm_Button" to="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons/Resize_Canvas_Confirm_Button" method="_on_pressed"]
+[connection signal="pressed" from="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons/Resize_Canvas_Cancel_Button" to="Resize_Canvas_Margin/Resize_Canvas_VBox/Resize_Canvas_Choice_Buttons/Resize_Canvas_Cancel_Button" method="_on_pressed"]

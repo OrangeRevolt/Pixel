@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=3 uid="uid://qkxdi4w5sv7d"]
+
+[ext_resource type="Texture2D" uid="uid://buo6m7dtnymat" path="res://assets/svgs/eye.svg" id="1_0pl3e"]
+[ext_resource type="Script" path="res://scenes/layer/layer_select.gd" id="1_8cnt0"]
+[ext_resource type="Script" path="res://scenes/layer/layer.gd" id="1_fyd5t"]
+[ext_resource type="Script" path="res://scenes/layer/layer_visible.gd" id="3_d5kbn"]
+[ext_resource type="Script" path="res://scenes/layer/layer_name.gd" id="5_010lp"]
+
+[node name="Layer" type="CenterContainer"]
+custom_minimum_size = Vector2(0, 80)
+offset_right = 336.0
+offset_bottom = 80.0
+size_flags_horizontal = 3
+script = ExtResource("1_fyd5t")
+
+[node name="Layer_Hbox" type="HBoxContainer" parent="."]
+layout_mode = 2
+alignment = 1
+
+[node name="Layer_Select" type="Button" parent="Layer_Hbox"]
+custom_minimum_size = Vector2(64, 72)
+layout_mode = 2
+size_flags_vertical = 0
+text = "S"
+script = ExtResource("1_8cnt0")
+
+[node name="Layer_Visible" type="Button" parent="Layer_Hbox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 72)
+layout_mode = 2
+size_flags_vertical = 0
+icon = ExtResource("1_0pl3e")
+script = ExtResource("3_d5kbn")
+
+[node name="Layer_Name" type="LineEdit" parent="Layer_Hbox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(172, 72)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+max_length = 20
+script = ExtResource("5_010lp")
+
+[connection signal="pressed" from="Layer_Hbox/Layer_Select" to="Layer_Hbox/Layer_Select" method="_on_pressed"]
+[connection signal="button_up" from="Layer_Hbox/Layer_Visible" to="Layer_Hbox/Layer_Visible" method="_on_button_up"]
+[connection signal="text_changed" from="Layer_Hbox/Layer_Name" to="Layer_Hbox/Layer_Name" method="_on_text_changed"]

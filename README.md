@@ -28,8 +28,6 @@ welcome to request features and report bugs. Enjoy
 ## Planned for the future.
 
 ## v2.0 Features
-
-* Undo/Redo canvas data
   
 * Export canvas with the option to convert layers to animation frames (sprite sheet creator.)
 
@@ -40,3 +38,17 @@ welcome to request features and report bugs. Enjoy
 * Palettes.
 
 * Flip layer horizontal / vertical.
+
+# Shortcuts keys
+
+* (Cntrl + Wheel up) to zoom in.
+  
+* (Cntrl + Wheel down) to zoom out.
+  
+* (Wheel up/down, or, wheel left/right ) to scroll canvas.
+  
+* (Mouse Click left) for primary color.
+  
+* (Mouse Click right) for secondary color.
+  
+* (Bracket left or right) to change tool tip size.

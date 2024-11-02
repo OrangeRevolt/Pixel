@@ -45,6 +45,8 @@ welcome to request features and report bugs. Enjoy
 
 # Shortcuts keys
 
+* (1,2,3 key) for selecting a tool.
+  
 * (Cntrl + Wheel up) to zoom in.
   
 * (Cntrl + Wheel down) to zoom out.

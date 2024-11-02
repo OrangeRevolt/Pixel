@@ -18,6 +18,10 @@ signal redraw_canvas #to call canvas redrawing globally.
 @warning_ignore("unused_signal")
 signal resize_canvas #to call canvas resize globally.
 @warning_ignore("unused_signal")
+signal flip_canvas_x #to call canvas x flip globally.
+@warning_ignore("unused_signal")
+signal flip_canvas_y #to call canvas y flip globally.
+@warning_ignore("unused_signal")
 signal redraw_gui_nodes #to call a gui node's _draw function or themes that uses this signal.
 @warning_ignore("unused_signal")
 signal update_shaders #global signal to update node shaders.

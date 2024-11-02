@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://6v00cnwk6buc"]
+[gd_scene load_steps=33 format=3 uid="uid://6v00cnwk6buc"]
 
 [ext_resource type="Script" path="res://scenes/program/file.gd" id="1_p5hup"]
 [ext_resource type="Script" path="res://scenes/program/program_v_box.gd" id="1_q3x1e"]
@@ -25,8 +25,12 @@
 [ext_resource type="Script" path="res://scenes/program/tip_size_spin_box.gd" id="16_ek22m"]
 [ext_resource type="Script" path="res://scenes/program/layers_pane.gd" id="16_hi1ry"]
 [ext_resource type="Script" path="res://scenes/program/export_file_dialog.gd" id="21_k4k78"]
+[ext_resource type="Texture2D" uid="uid://cniwuc6s8blhm" path="res://assets/svgs/layer_flip_x.svg" id="25_1rgmm"]
 [ext_resource type="Script" path="res://scenes/program/save_file_dialog.gd" id="25_sbf7w"]
 [ext_resource type="Script" path="res://scenes/program/load_file_dialog.gd" id="26_140ea"]
+[ext_resource type="Script" path="res://scenes/program/layer_mirror_x.gd" id="26_dywa4"]
+[ext_resource type="Texture2D" uid="uid://byuajhabrelfk" path="res://assets/svgs/layer_flip_y.svg" id="26_g0411"]
+[ext_resource type="Script" path="res://scenes/program/layer_mirror_y.gd" id="28_4e6en"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qri3t"]
 shader = ExtResource("14_3f04b")
@@ -83,6 +87,7 @@ item_4/id = 4
 script = ExtResource("1_p5hup")
 
 [node name="Edit" type="PopupMenu" parent="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar"]
+unique_name_in_owner = true
 item_count = 4
 item_0/text = "Grid Settings"
 item_1/text = "Resize Canvas"
@@ -90,8 +95,10 @@ item_1/id = 1
 item_1/disabled = true
 item_2/text = "Undo"
 item_2/id = 2
+item_2/disabled = true
 item_3/text = "Redo"
 item_3/id = 3
+item_3/disabled = true
 script = ExtResource("3_r016b")
 
 [node name="View" type="PopupMenu" parent="Program_Margin/Program_VBox/Main_Menu_HBox/Main_MenuBar"]
@@ -169,6 +176,7 @@ editable = false
 script = ExtResource("16_ek22m")
 
 [node name="Canvas_Scroll" type="ScrollContainer" parent="Program_Margin/Program_VBox/Work_Area"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -218,6 +226,18 @@ disabled = true
 icon = ExtResource("5_ibvau")
 script = ExtResource("16_cwb77")
 
+[node name="Layer_Mirror_X" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons"]
+layout_mode = 2
+disabled = true
+icon = ExtResource("25_1rgmm")
+script = ExtResource("26_dywa4")
+
+[node name="Layer_Mirror_Y" type="Button" parent="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons"]
+layout_mode = 2
+disabled = true
+icon = ExtResource("26_g0411")
+script = ExtResource("28_4e6en")
+
 [node name="Popup_Group" type="Node" parent="."]
 unique_name_in_owner = true
 
@@ -264,6 +284,8 @@ script = ExtResource("21_k4k78")
 [connection signal="value_changed" from="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_SpinBox" to="Program_Margin/Program_VBox/Work_Area/Tools_Pane/Tip_Size_SpinBox" method="_on_value_changed"]
 [connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Add" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Add" method="_on_pressed"]
 [connection signal="button_up" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Remove" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Remove" method="_on_button_up"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Mirror_X" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Mirror_X" method="_on_pressed"]
+[connection signal="pressed" from="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Mirror_Y" to="Program_Margin/Program_VBox/Work_Area/Layers_Pane/Layers_Vbox/Layers_Buttons/Layer_Mirror_Y" method="_on_pressed"]
 [connection signal="file_selected" from="Popup_Group/Save_FileDialog" to="Popup_Group/Save_FileDialog" method="_on_file_selected"]
 [connection signal="file_selected" from="Popup_Group/Load_FileDialog" to="Popup_Group/Load_FileDialog" method="_on_file_selected"]
 [connection signal="file_selected" from="Popup_Group/Export_FileDialog" to="Popup_Group/Export_FileDialog" method="_on_file_selected"]

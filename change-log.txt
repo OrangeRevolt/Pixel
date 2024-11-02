@@ -1,20 +1,18 @@
-							ORP Version 0.7
+							ORP Version 0.9
 ================================================================================
 
-Fixed bug with eraser tool not working right, do to not putting the sample pixel
-chicker inside the loop.
+Programmed canvas scroll dragging with mouse, using mouse wheele middle pressed 
+(for users that don't have a middle left or right click to the mouse wheel when 
+scrolling zoomed in canvas)
 
 -------------------------------------------------------------------------------
 
-Improved code in the tool script to use the update gui signal instead for all 
-theme related changing. (removes dependency issue)
+Changed boot screen splash to last an extra second, for enough time to read
+the splash before disapearing
 
----------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
-Programmed Undo/Redo function for layer's image.
-
---------------------------------------------------------------------------------
-
-Programmed cancel button for Resize Canvas popup.
+Added and programmed flip_x and flip_y buttons on layers buttons. Flips
+the layer image horizontally or vertically.
 
 -------------------------------------------------------------------------------

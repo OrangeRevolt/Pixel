@@ -9,13 +9,16 @@ var canvas_img : Image = Image.create_empty(8,8,false,Image.FORMAT_RGBA8)
 var flood_fill_task_done = true #prevent user from clicking on canvas before bucket fill finishes.
 
 #for undo/redo function
-const UNDO_HISTORY = 0
-const REDO_HISTORY = 1
-var image_undo_history : Array = []
-var image_redo_history : Array = []
+var image_history : Array = []
+var tool_used : bool = false
+var history_dex : int = 0
 var in_undo : bool = false
+var previous_layer : int = 0
 
-# Called when the node enters the scene tree for the first time.
+#for mouse drag scrolling
+var ms_vel : Vector2 = Vector2(-1,-1) #stores the motion velocity vector of the mouse.
+var ms_last_pos : Vector2 = Vector2(-1,-1) #stores the starting drag postion, for distance based scrolling speed.
+
 func _ready() -> void:
 	GlobalSignals.popup_open.connect(Callable(self,"_disable_input"))
 	GlobalSignals.popup_exited.connect(Callable(self,"_enable_input"))
@@ -23,23 +26,51 @@ func _ready() -> void:
 	GlobalSignals.redraw_canvas.connect(Callable(self,"_redraw_layers"))
 	GlobalSignals.update_shaders.connect(Callable(self,"_update_local_shaders"))
 	GlobalSignals.resize_canvas.connect(Callable(self,"_resize_usercanvas"))
+	GlobalSignals.flip_canvas_x.connect(Callable(self,"_flip_layer_x"))
+	GlobalSignals.flip_canvas_y.connect(Callable(self,"_flip_layer_y"))
 	GlobalSignals.undo.connect(Callable(self,"_undo_canvas_edit"))
 	GlobalSignals.redo.connect(Callable(self,"_redo_canvas_edit"))
 
+func _flip_layer_x():
+	ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.flip_x()
+	_redraw_layers(REDRAW_ALL)
+
+
+func _flip_layer_y():
+	ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]].image.flip_y()
+	_redraw_layers(REDRAW_ALL)
+
+
 func _undo_canvas_edit(): 
-	var h_image : Image = Image.create_from_data(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,false,Image.FORMAT_RGBA8,image_undo_history[0].image)
-	ProgramData.canvas_meta["layers"][image_undo_history[0].layer].image = h_image
-	image_undo_history.push_back(image_undo_history[0])
-	image_undo_history.pop_front()
+	#since we add two canvas histories (old and new change) per edit, we need to subtract by two to get the undo history.
+	history_dex = clamp(history_dex - 2, 0,image_history.size()-1)
+	var h_image : Image = Image.create_from_data(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,false,Image.FORMAT_RGBA8,image_history[history_dex].image)
+	ProgramData.canvas_meta["layers"][image_history[history_dex].layer].image = h_image
+	print(str(history_dex),",",str(image_history.size()-1))
 	_redraw_layers(REDRAW_ALL)
-	
+	if history_dex == 0:
+		%Edit.set_item_disabled(2,true)
+	else:
+		%Edit.set_item_disabled(2,false)
+		
+	if image_history.size() > 0:
+		%Edit.set_item_disabled(3,false)
+		
 func _redo_canvas_edit():
-	var h_image : Image = Image.create_from_data(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,false,Image.FORMAT_RGBA8,image_redo_history[0].image)
-	ProgramData.canvas_meta["layers"][image_redo_history[0].layer].image = h_image
-	image_redo_history.push_back(image_redo_history[0])
-	image_redo_history.pop_front()
+	#since we add two canvas histories (old and new change) per edit, we need to add by two to get the redo history.
+	history_dex = clamp(history_dex + 2, 0,image_history.size()-1)
+	var h_image : Image = Image.create_from_data(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,false,Image.FORMAT_RGBA8,image_history[history_dex].image)
+	ProgramData.canvas_meta["layers"][image_history[history_dex].layer].image = h_image
 	_redraw_layers(REDRAW_ALL)
-	
+	print(str(history_dex),",",str(image_history.size()-1))
+	if history_dex >= image_history.size()-1:
+		%Edit.set_item_disabled(3,true)
+	else:
+		%Edit.set_item_disabled(3,false)
+		
+	if image_history.size() > 0:
+		%Edit.set_item_disabled(2,false)
+		
 func _disable_input():
 	set_process_input(false)
 	set_process(false)
@@ -95,15 +126,44 @@ func _mouse_in_canvas(pos : Vector2):
 	else:
 		return false
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		ms_vel = event.screen_velocity
+	else:
+		ms_vel = Vector2.ZERO
+
 func _process(_delta: float) -> void:
 	#we need to continously redraw every frame, so the tool tip texture can be seen on the canvas or not if position is outside.
 	queue_redraw()
+	#store the last mouse position for the drag canvas function.
+	if Input.is_action_just_pressed("Grab_Scolling"):
+		ms_last_pos = get_global_mouse_position()
+	#drag the canvas by the distance to the starting drag point.
+	if Input.is_action_pressed("Grab_Scolling") and (%Canvas_Scroll.get_h_scroll_bar().visible or %Canvas_Scroll.get_v_scroll_bar().visible) and _mouse_in_canvas(get_local_mouse_position()) == true:
+		mouse_default_cursor_shape = CursorShape.CURSOR_DRAG
+		if ms_vel.y < 0:
+			%Canvas_Scroll.scroll_vertical -= 1 * ms_last_pos.distance_to(get_global_mouse_position()) * 0.1
+		elif ms_vel.y > 0:
+			%Canvas_Scroll.scroll_vertical += 1 * ms_last_pos.distance_to(get_global_mouse_position()) * 0.1
+		if ms_vel.x < 0:
+			%Canvas_Scroll.scroll_horizontal -= 1 * ms_last_pos.distance_to(get_global_mouse_position()) * 0.1
+		elif ms_vel.x > 0:
+			%Canvas_Scroll.scroll_horizontal += 1 * ms_last_pos.distance_to(get_global_mouse_position()) * 0.1
+	else:
+		ms_vel = Vector2.ZERO
 	
-	
-	if Input.is_action_just_released("Tool_Input_One") and ProgramData.canvas_meta["layers"].size() > 0:
-		if image_undo_history.size() > 0:
-			add_history(REDO_HISTORY,ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]],ProgramData.canvas_meta["selected_layer"])
+	if Input.is_action_just_released("Tool_Input_One") and tool_used == true:
+		if image_history.size() > 0:
+			#check to see if we are before the last history canvas, if so that means we need to delete the old redo history.
+			var old_h_size = image_history.size()-1
+			if history_dex < image_history.size()-1:
+				for i in old_h_size - history_dex:
+					image_history.pop_back()
+					
+			add_history(ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]],ProgramData.canvas_meta["selected_layer"])
+			
 		in_undo = false
+		tool_used = false
 		
 	if Input.is_action_just_pressed("Zoom_In") and ProgramData.canvas_meta["layers"].size() > 0:
 		
@@ -116,7 +176,7 @@ func _process(_delta: float) -> void:
 		#update our canvas shader, so the grid scales to our zoom.
 		material.set("shader_parameter/zoom_level",ProgramData.canvas_meta["zoom_level"])
 		GlobalSignals.update_shaders.emit()
-		
+			
 	elif Input.is_action_just_pressed("Zoom_Out") and ProgramData.canvas_meta["layers"].size() > 0:
 		
 		ProgramData.canvas_meta["zoom_level"] = clamp(ProgramData.canvas_meta["zoom_level"] - 1,1,99)
@@ -140,28 +200,50 @@ func _process(_delta: float) -> void:
 			#add a history to the undo, when just pressed so it just adds one entry.
 			if in_undo == false:
 				
-				add_history(UNDO_HISTORY,ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]],ProgramData.canvas_meta["selected_layer"])
-				print("undo history added")
+				add_history(ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]],ProgramData.canvas_meta["selected_layer"])
+				GlobalSignals.enable_menu_options.emit()
 				in_undo = true
 				
 			pen(INPUT_ONE)
 			
 		elif ProgramData.canvas_meta["selected_tool"] == ProgramData.ERASER_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
+			if in_undo == false:
+				
+				add_history(ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]],ProgramData.canvas_meta["selected_layer"])
+				GlobalSignals.enable_menu_options.emit()
+				in_undo = true
+				
 			eraser(INPUT_ONE)
 		
 	elif Input.is_action_pressed("Tool_Input_Two") and ProgramData.canvas_meta["layers"].size() > 0:
 		
 		if ProgramData.canvas_meta["selected_tool"] == ProgramData.PEN_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
+			if in_undo == false:
+				
+				add_history(ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]],ProgramData.canvas_meta["selected_layer"])
+				GlobalSignals.enable_menu_options.emit()
+				in_undo = true
+				
 			pen(INPUT_TWO)
 	
 	
-	if Input.is_action_just_released("Tool_Input_One") and ProgramData.canvas_meta["layers"].size() > 0 and flood_fill_task_done == true:
+	if Input.is_action_just_pressed("Tool_Input_One") and ProgramData.canvas_meta["layers"].size() > 0 and flood_fill_task_done == true:
 		if ProgramData.canvas_meta["selected_tool"] == ProgramData.BUCKET_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
+			if in_undo == false:
+				
+				add_history(ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]],ProgramData.canvas_meta["selected_layer"])
+				GlobalSignals.enable_menu_options.emit()
+				in_undo = true
 			flood_fill_task_done = false
 			bucket(INPUT_ONE)
 			
-	elif Input.is_action_just_released("Tool_Input_Two") and ProgramData.canvas_meta["layers"].size() > 0 and flood_fill_task_done == true:
+	elif Input.is_action_just_pressed("Tool_Input_Two") and ProgramData.canvas_meta["layers"].size() > 0 and flood_fill_task_done == true:
 		if ProgramData.canvas_meta["selected_tool"] == ProgramData.BUCKET_TOOL and _mouse_in_canvas(get_local_mouse_position()) == true:
+			if in_undo == false:
+				
+				add_history(ProgramData.canvas_meta["layers"][ProgramData.canvas_meta["selected_layer"]],ProgramData.canvas_meta["selected_layer"])
+				GlobalSignals.enable_menu_options.emit()
+				in_undo = true
 			flood_fill_task_done = false
 			bucket(INPUT_TWO)
 	
@@ -214,15 +296,19 @@ func _redraw_layers(redraw_type : int = 1):
 	
 	RenderingServer.texture_2d_update(texture.get_rid(),canvas_img,0)
 
-func add_history(history_type : int, layer : Dictionary, layer_dex : int):
-	var img_undo = {
+func add_history(layer : Dictionary, layer_dex : int):
+	#because the way undo/redo works, we to clear out history if we on a new layer.
+	if previous_layer != layer_dex:
+		image_history.clear()
+		history_dex = 0
+	
+	previous_layer = layer_dex
+	var img_hist = {
 		"layer": layer_dex,
 		"image": layer.image.get_data(),
 	}
-	if history_type == UNDO_HISTORY:
-		image_undo_history.append(img_undo)
-	else:
-		image_redo_history.append(img_undo)
+	image_history.push_back(img_hist)
+	history_dex += 1
 
 
 func pen(action_type) -> void:
@@ -239,6 +325,7 @@ func pen(action_type) -> void:
 					if sample_color != ProgramData.canvas_meta["primary_color"]:
 						cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),ProgramData.canvas_meta["primary_color"])
 		_redraw_layers(REDRAW_PORTION)
+		tool_used = true
 			
 	elif action_type == INPUT_TWO:
 		for py in ProgramData.canvas_meta["tool_tip_size"]:
@@ -247,6 +334,7 @@ func pen(action_type) -> void:
 					if sample_color != ProgramData.canvas_meta["secondary_color"]:
 						cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),ProgramData.canvas_meta["secondary_color"])
 		_redraw_layers(REDRAW_PORTION)
+		tool_used = true
 
 func eraser(action_type) -> void:
 	#eraser works the same way as pen, but draws with transperency on layers above base layer.
@@ -266,12 +354,14 @@ func eraser(action_type) -> void:
 						if sample_color != ProgramData.canvas_meta["secondary_color"]:
 							cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),ProgramData.canvas_meta["secondary_color"])
 			_redraw_layers(REDRAW_ALL)
+			tool_used = true
 		else:
 			for py in ProgramData.canvas_meta["tool_tip_size"]:
 				for px in ProgramData.canvas_meta["tool_tip_size"]:
 					if (snap_ms_pos.x + px < cur_layer.image.get_width() and snap_ms_pos.y + py < cur_layer.image.get_height()):
 						cur_layer.image.set_pixelv(Vector2i(snap_ms_pos.x + px,snap_ms_pos.y + py),Color.TRANSPARENT)
 			_redraw_layers(REDRAW_ALL)
+			tool_used = true
 
 func layer_img_is_one_color(layer_dex):
 	var first_color : Array = [ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[0],ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[1],ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[2],ProgramData.canvas_meta["layers"][layer_dex].image.get_data()[3]]
@@ -365,6 +455,7 @@ func bucket(action_type) -> void:
 				que_fill.pop_front()
 			
 			_redraw_layers(REDRAW_ALL)
+			tool_used = true
 			flood_fill_task_done = true
 
 func _draw() -> void:

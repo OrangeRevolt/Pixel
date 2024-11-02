@@ -15,6 +15,8 @@ welcome to request features and report bugs. Enjoy
 * Zoom and pan canvas.
 
 * Resize canvas.
+  
+* Flip layer horizontal / vertical.
 
 * View and edit grid.
 
@@ -33,11 +35,13 @@ welcome to request features and report bugs. Enjoy
 
 * Layer combine.
 
+* Layer rotate 90 deg clockwise/counter-clockwise. 
+
 * Line tool.
 
 * Palettes.
 
-* Flip layer horizontal / vertical.
+
 
 # Shortcuts keys
 
@@ -47,6 +51,8 @@ welcome to request features and report bugs. Enjoy
   
 * (Wheel up/down, or, wheel left/right ) to scroll canvas.
   
+* (Wheel middle held) to scroll canvas all directions.
+
 * (Mouse Click left) for primary color.
   
 * (Mouse Click right) for secondary color.

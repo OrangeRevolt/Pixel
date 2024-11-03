@@ -10,7 +10,9 @@ func _enable_options():
 	set_item_disabled(1,false) 
 	if %Canvas_Texture.image_history.size() > 0:
 		set_item_disabled(2,false)
-		#set_item_disabled(3,false)
+	else:
+		set_item_disabled(2,true)
+		set_item_disabled(3,true)
 
 func _on_id_pressed(id: int) -> void:
 	if id == 0: #Grid Settings

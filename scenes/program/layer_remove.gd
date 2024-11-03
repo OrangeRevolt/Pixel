@@ -11,6 +11,12 @@ func _on_button_up() -> void:
 				break
 		
 		ProgramData.canvas_meta["layers"].pop_at(ProgramData.canvas_meta["selected_layer"])
+		if %Canvas_Texture.image_history[0].layer == ProgramData.canvas_meta["selected_layer"]:
+			print("history cleared for layer" + str(ProgramData.canvas_meta["selected_layer"]))
+			%Canvas_Texture.image_history.clear()
+			%Canvas_Texture.history_dex = 0
+			GlobalSignals.enable_menu_options.emit()
+			
 		ProgramData.canvas_meta["selected_layer"] -= 1
 		#print(ProgramData.canvas_meta["layers"])
 		

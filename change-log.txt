@@ -1,18 +1,13 @@
-							ORP Version 0.9
+							ORP Version 1.0
 ================================================================================
 
-Programmed canvas scroll dragging with mouse, using mouse wheele middle pressed 
-(for users that don't have a middle left or right click to the mouse wheel when 
-scrolling zoomed in canvas)
+Fixed issue with tool button selection theme for shortcut keys.
 
 -------------------------------------------------------------------------------
 
-Changed boot screen splash to last an extra second, for enough time to read
-the splash before disapearing
+Programmed undo/redo history to flip layers buttons.
 
 -------------------------------------------------------------------------------
 
-Added and programmed flip_x and flip_y buttons on layers buttons. Flips
-the layer image horizontally or vertically.
-
--------------------------------------------------------------------------------
+Fixed issue with edit undo/redo still enabled when the history layer itself was 
+deleted with remove layer button.

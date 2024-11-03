@@ -10,15 +10,27 @@ func _ready() -> void:
 func _redraw_tools():
 	if ProgramData.canvas_meta["selected_tool"] == ProgramData.PEN_TOOL:
 		%Pen.button_pressed = true
+		%Eraser.button_pressed = false
+		%Bucket.button_pressed = false
 		%Pen.grab_focus()
+		%Bucket.release_focus()
+		%Eraser.release_focus()
 	%Eraser.disabled = false
 	if ProgramData.canvas_meta["selected_tool"] == ProgramData.ERASER_TOOL:
 		%Eraser.button_pressed = true
+		%Pen.button_pressed = false
+		%Bucket.button_pressed = false
 		%Eraser.grab_focus()
+		%Bucket.release_focus()
+		%Pen.release_focus()
 	%Bucket.disabled = false
-	if ProgramData.canvas_meta["selected_tool"] == ProgramData.ERASER_TOOL:
+	if ProgramData.canvas_meta["selected_tool"] == ProgramData.BUCKET_TOOL:
 		%Bucket.button_pressed = true
+		%Pen.button_pressed = false
+		%Eraser.button_pressed = false
 		%Bucket.grab_focus()
+		%Eraser.release_focus()
+		%Pen.release_focus()
 
 
 func _enable_tools():

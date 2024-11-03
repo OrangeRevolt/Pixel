@@ -46,7 +46,7 @@ func _undo_canvas_edit():
 	history_dex = clamp(history_dex - 2, 0,image_history.size()-1)
 	var h_image : Image = Image.create_from_data(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,false,Image.FORMAT_RGBA8,image_history[history_dex].image)
 	ProgramData.canvas_meta["layers"][image_history[history_dex].layer].image = h_image
-	print(str(history_dex),",",str(image_history.size()-1))
+	
 	_redraw_layers(REDRAW_ALL)
 	if history_dex == 0:
 		%Edit.set_item_disabled(2,true)
@@ -62,7 +62,7 @@ func _redo_canvas_edit():
 	var h_image : Image = Image.create_from_data(ProgramData.canvas_meta["size"].x,ProgramData.canvas_meta["size"].y,false,Image.FORMAT_RGBA8,image_history[history_dex].image)
 	ProgramData.canvas_meta["layers"][image_history[history_dex].layer].image = h_image
 	_redraw_layers(REDRAW_ALL)
-	print(str(history_dex),",",str(image_history.size()-1))
+	
 	if history_dex >= image_history.size()-1:
 		%Edit.set_item_disabled(3,true)
 	else:
@@ -257,12 +257,15 @@ func _process(_delta: float) -> void:
 		%Tip_Size_Slider.value = ProgramData.canvas_meta["tool_tip_size"]
 		%Tip_Size_SpinBox.value = ProgramData.canvas_meta["tool_tip_size"]
 		
-	if Input.is_action_just_pressed("Pen_Tool"):
+	if Input.is_action_just_pressed("Pen_Tool") and ProgramData.canvas_meta["layers"].size() > 0:
 		ProgramData.canvas_meta["selected_tool"] = ProgramData.PEN_TOOL
-	elif Input.is_action_just_pressed("Eraser_Tool"):
+		GlobalSignals.redraw_gui_nodes.emit()
+	elif Input.is_action_just_pressed("Eraser_Tool") and ProgramData.canvas_meta["layers"].size() > 0:
 		ProgramData.canvas_meta["selected_tool"] = ProgramData.ERASER_TOOL
-	elif Input.is_action_just_pressed("Bucket_Tool"):
+		GlobalSignals.redraw_gui_nodes.emit()
+	elif Input.is_action_just_pressed("Bucket_Tool") and ProgramData.canvas_meta["layers"].size() > 0:
 		ProgramData.canvas_meta["selected_tool"] = ProgramData.BUCKET_TOOL
+		GlobalSignals.redraw_gui_nodes.emit()
 
 func _redraw_layers(redraw_type : int = 1):
 	

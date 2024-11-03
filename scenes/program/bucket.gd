@@ -15,6 +15,9 @@ func _update_button_theme():
 		add_theme_stylebox_override("focus",bsl)
 	else:
 		remove_theme_stylebox_override("normal")
+		remove_theme_stylebox_override("focus")
+		button_pressed = false
+		release_focus()
 		remove_theme_color_override("icon_normal_color")
 		remove_theme_color_override("icon_focus_color")
 		remove_theme_color_override("icon_hover_color")

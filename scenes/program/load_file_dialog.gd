@@ -11,9 +11,10 @@ func _on_file_selected(path: String) -> void:
 		ProgramData.canvas_meta.color = Color(json_data["color"][0],json_data["color"][1],json_data["color"][2],json_data["color"][3])
 		
 		for l in json_data["layers"]:
-			#I think i forgot to convert layer image to array when i programmed save function. so this is temporary parsing code until it is replaced inside save function.
+			#Need to convert layer data to change it from string to a string array. first remove quotes, then brackets, and finally split it into a string array.
 			var parsed_layer_img_data_string : Array = l.image.replace('""',"").replace("[","").replace("]","").split(",")
 			var parsed_layer_img_data_finished : Array
+			#insert the string values into the new array, casted as int.
 			for i in parsed_layer_img_data_string.size():
 				parsed_layer_img_data_finished.append(int(parsed_layer_img_data_string[i]))
 				

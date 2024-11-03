@@ -1,10 +1,6 @@
 # Pixel
 An open source paint program, focused creating tilesets and sprites for pixel art games.
-
-I'm working towards the official version 1.0 release, that is focused on neccessary 
-features first. So for now i reccommed to just try it out, and use it on test
-projects. I'm always working on it, so there will be frequent updates. You are
-welcome to request features and report bugs. Enjoy
+With the now released v1.0, you get these features shown bellow.
 
 ## v1.0 Features
 
@@ -27,7 +23,7 @@ welcome to request features and report bugs. Enjoy
 * Export canvas as png.
   
 
-## Planned for the future.
+# Planned for the future.
 
 ## v2.0 Features
   

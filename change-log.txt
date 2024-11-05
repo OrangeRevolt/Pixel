@@ -1,13 +1,7 @@
-							ORP Version 1.0
+							ORP Version 1.01
 ================================================================================
 
-Fixed issue with tool button selection theme for shortcut keys.
+Fixed crashed with redraw layer. The width and height in loop was reverse,
+causing it to get/set pixels beyond the image's bounds. 
 
--------------------------------------------------------------------------------
-
-Programmed undo/redo history to flip layers buttons.
-
--------------------------------------------------------------------------------
-
-Fixed issue with edit undo/redo still enabled when the history layer itself was 
-deleted with remove layer button.
+--------------------------------------------------------------------------------
